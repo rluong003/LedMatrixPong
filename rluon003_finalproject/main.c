@@ -63,7 +63,7 @@ button3 = P2 UP
 button4 = P2 Down
 
 */
-
+// left paddle
 void set_colum1()
 {
 	PORTD = 0x01;
@@ -90,7 +90,7 @@ void set_colum1()
 	PORTD = 0x00;
 	PORTD = 0x04;
 }
-
+// reset matrix
 void clearmatrix()
 {
 	PORTD = 0x01;
@@ -141,7 +141,7 @@ void clearmatrix()
 	PORTD = 0x00;
 	PORTD = 0x04;												
 }
-
+// paddle 2
 void set_colum2()
 {
 	PORTD = 0x00;
@@ -169,7 +169,7 @@ void set_colum2()
 	PORTD = 0x05;
 	
 }
-
+// set the matrix, 3 Leds for each matrix
 void set_matrix(unsigned int index, unsigned char paddle)
 {
 	unsigned int amt = 3;
@@ -210,7 +210,7 @@ void set_matrix(unsigned int index, unsigned char paddle)
 	
 	PORTD = 0x02;
 }
-
+// updates the position of the ball
 void ballposition(unsigned char x, unsigned char y)
 {
 	
@@ -248,7 +248,7 @@ void ballposition(unsigned char x, unsigned char y)
 	
 	PORTD = 0x02;
 }
-
+//controls for the left paddle
 void p1()
 {
 	button1 = ~PINB & 0x02;
@@ -360,7 +360,7 @@ void p1()
 	}
 
 }
-
+// right paddle controls
 void p2()
 {
 	button3 = ~PINB & 0x08;
@@ -475,6 +475,7 @@ void p2()
 
 
 //// Credit to Jerry for this state machine. The led for my ball was flickering before this state machine
+// updates the paddles and balls positions states
 void dis()
 {
 	switch(display)
@@ -519,7 +520,7 @@ void dis()
 	}
 	
 }
-
+// reset the game to its initial state
 void resetvalues()
 {
 	 count = 0;
@@ -536,7 +537,7 @@ void resetvalues()
 	score2 = 0;
 	direction = 0;
 }
-
+//two player game mode rules
 void twoplayer()
 {
 	button = ~PINB & 0x01;
@@ -605,7 +606,7 @@ void twoplayer()
 	}
 	
 }
-
+// ai game mode rules, ai chooses a random index to move to
 void aigame()
 {
 	switch(aig)
@@ -711,7 +712,7 @@ void aigame()
 	}
 	
 }
-
+// game logic
 void baller()
 {
 	switch(ball)
@@ -719,7 +720,7 @@ void baller()
 		case start3:
 		ball = init;
 		break;
-		
+		// start of the game
 		case init:
 		if(gamestart && !direction)
 		{
@@ -734,7 +735,7 @@ void baller()
 			ball = init;
 		}
 		break;
-		
+		//direction of the ball = left
 		case left:
 		direction = 0;
 		if(y_pos == 6){
@@ -764,7 +765,7 @@ void baller()
 		
 		
 		break;
-		
+		//direction of the ball = right
 		case right:
 		direction = 1;
 
@@ -793,7 +794,7 @@ void baller()
 			ball = right;
 		}
 			break;
-			
+		//direction of the ball = up and right
 		case ur:
 		direction = 1;
 		if(x_pos == 7 && y_pos == 1 && ( (x_pos - 1) == p2index + 1))
@@ -841,7 +842,7 @@ void baller()
 		}
 		
 		break;
-		
+		//direction of the ball = down and right
 		case lr:
 		direction = 1;
 			
@@ -889,7 +890,7 @@ void baller()
 			ball = lr;
 		}
 		break;
-		
+		//direction of the ball = down and left
 		case ll:
 		direction = 0;
 		
@@ -941,7 +942,7 @@ void baller()
 			ball = ll;
 		}
 		break;
-		
+		//direction of the ball = up and left
 		case ul:
 		direction = 0;
 		
@@ -991,7 +992,7 @@ void baller()
 				ball = ul;
 			}
 			break;
-			
+			// a player scores state
 			case point:
 			ball = init;
 			break;
@@ -1065,7 +1066,7 @@ void baller()
 		break;
 	}
 }
-
+// menu to choose between 2 player mode or player vs the AI on the LCD Screen
 void flagcheck()
 {
 	button = ~PINB & 0x04;
@@ -1150,7 +1151,7 @@ void flagcheck()
 	
 }
 
-
+// updates the scoreboard
 void tick_menu()
 {
 	button = ~PINB & 0x01;
@@ -1314,7 +1315,7 @@ int main(void)
 
 	TimerSet(10);
 	TimerOn();
-	
+	// initialize states
 	paddle1 = start1;
 	paddle2 = start2;
 	menu = start;
@@ -1323,7 +1324,7 @@ int main(void)
 	display = init1;
 	game = start4;
 	print = skrt;
-	
+	//set the LCD to select game mode menu
 	while(twoPFlag == 0)
 	{
 		flagcheck();
@@ -1335,9 +1336,10 @@ int main(void)
     {
 		if(reset5)
 		{
+			// resets game
 			goto RESET;
 		}
-				
+				// two player mode
 				if(twoPFlag == 1){
 				
 				if(reset5)
@@ -1363,7 +1365,7 @@ int main(void)
 				
 				dis();
 				}
-				
+				//ai game mode
 				else if ( twoPFlag == 2)
 				{
 				
